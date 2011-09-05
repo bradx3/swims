@@ -1,0 +1,68 @@
+#placeholder{:style => "width:800px;height:400px;"}
+
+#times
+  %h2 Times
+  %table.stats
+    %tr
+      %th Average Training Time / km
+      %td= Swim.average_time(Swim.measured.training).to_time
+    %tr
+      %th Best Training Time / km
+      %td= Swim.best_training_swim.minutes_per_km.to_time
+    %tr
+      %th Best 1km Training Time
+      %td= Swim.best_training_swim(1000).minutes_per_km.to_time
+    %tr
+      %th Best 2km Training Time
+      %td= (Swim.best_training_swim(2000).total_seconds / 60.0).to_time
+    %tr
+      %th Best 3km Training Time
+      %td= (Swim.best_training_swim(3000).total_seconds / 60.0).to_time
+    %tr
+      %th Average Race Time / km
+      %td= Swim.average_time(Swim.races).to_time
+
+#distances
+  %h2 Distances
+  %table.stats
+    %tr
+      %th Total Distance (km)
+      %td= Swim.sum(:distance) / 1000.0
+    %tr
+      %th Average Training Distance (km)
+      %td= (Swim.training.average(:distance) / 1000.0).round(2)
+    %tr
+      %th Average Distance / month
+      %td
+        = (Swim.average_distance_per_month / 1000.0).round(2)
+    %tr
+      %th Best Distance / month
+      %td
+        - month, distance = Swim.best_distance_month
+        = (distance / 1000.0).round(2)
+        (#{month})
+
+#log
+  %h2 Log
+  %table.stats
+    %tr
+      %th
+      %th Average Time
+      %th Total Distance
+      - distances = Swim.total_distance_per_month
+      - times = Swim.average_times_by_month
+      - first_month = Date.strptime(distances.first[0], "%B %Y")
+      - month = Date.today.at_beginning_of_month
+      - while month >= first_month
+        - month_str = month.strftime("%B %Y")
+        %tr
+          %th= month_str
+          %td
+            - time = times.detect { |m, s| m == month_str }
+            = time[1].to_time if time
+          %td
+            - distance = distances.detect { |m, s| m == month_str }
+            = (distance[1] / 1000.0).round(2) if distance
+        -  month = month - 1.month
+
+= javascript_tag("initGraph(#{Swim.notes.to_json}, #{Swim.minutes_per_km(:race => nil).to_json}, #{Swim.distances(:race => nil).to_json},#{Swim.minutes_per_km(:race => true).to_json},#{Swim.distances(:race => true).to_json})")
