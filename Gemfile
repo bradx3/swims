@@ -18,6 +18,7 @@ end
 group :development do
   gem 'ruby-debug19', :require => 'ruby-debug'
   gem 'sqlite3'
+  gem 'heroku'
 end
 
 group :production do
