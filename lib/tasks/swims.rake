@@ -1,4 +1,4 @@
-task :add_swim do
+task :add_swim => :environment do
   Swim.create!(date: ENV["date"] || Date.today,
                notes: ENV["notes"],
                race: ENV["race"],
