@@ -1,4 +1,6 @@
 class Swim < ActiveRecord::Base
+  default_scope order(:date)
+
   scope :measured, conditions: [ "minutes > 0 and seconds  > 0 and distance > 0" ]
   scope :training, :conditions => { :race => nil }
   scope :races, :conditions => { :race => true }
