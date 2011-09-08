@@ -2,7 +2,6 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.1.0'
 
-gem 'sqlite3'
 gem 'jquery-rails'
 gem 'haml'
 gem 'sass'
@@ -18,5 +17,9 @@ end
 
 group :development do
   gem 'ruby-debug19', :require => 'ruby-debug'
+  gem 'sqlite3'
 end
 
+group :production do
+  gem 'pg'
+end
