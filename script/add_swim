@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+
+require 'trollop'
+require 'active_support/all'
+
+opts = Trollop::options do
+  opt :distance, "In metres", type: :int
+  opt :time, "In minutes.seconds format", type: :string
+  opt :date, "Date of swim yyyy-mm-dd", type: :string, default: Date.today.strftime("%Y-%m-%d")
+  opt :notes, "Any notes", type: :string
+  opt :race, "Was this swim a race?"
+end
+
+Trollop::die :distance, "must exists" if opts[:distance].blank?
+
+notes = opts[:notes].gsub("(", "[").gsub(")", "]")
+
+params = {
+  minutes: opts[:time].split(".").first,
+  seconds: opts[:time].split(".").last,
+  distance: opts[:distance],
+  notes: %Q{"'#{notes}'"},
+  date: opts[:date],
+  race: opts[:race],
+}
+
+params = params.map { |k, v| "#{k}=#{v}" }
+cmd = "heroku run rake add_swim #{params.join(" ")}"
+puts cmd
+system(cmd)
