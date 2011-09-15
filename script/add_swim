@@ -16,15 +16,16 @@ Trollop::die :distance, "must exists" if opts[:distance].blank?
 notes = opts[:notes].gsub("(", "[").gsub(")", "]")
 
 params = {
-  minutes: opts[:time].split(".").first,
-  seconds: opts[:time].split(".").last,
   distance: opts[:distance],
   notes: %Q{"'#{notes}'"},
   date: opts[:date],
   race: opts[:race],
 }
+params[:minutes] = opts[:time].split(".").first if opts[:time]
+params[:seconds] = opts[:time].split(".").last if opts[:time]
 
 params = params.map { |k, v| "#{k}=#{v}" }
 cmd = "heroku run rake add_swim #{params.join(" ")}"
 puts cmd
 system(cmd)
+system("open http://swims-lucky-dip-net.herokuapp.com/")
