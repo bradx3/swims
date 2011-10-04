@@ -2,7 +2,7 @@ class Swim < ActiveRecord::Base
   default_scope order(:date)
 
   scope :measured, conditions: [ "minutes > 0 and seconds  > 0 and distance > 0" ]
-  scope :training, :conditions => { :race => nil }
+  scope :training, :conditions => { :race => [nil, false] }
   scope :races, :conditions => { :race => true }
 
   def self.average_time(swims)
@@ -71,21 +71,27 @@ class Swim < ActiveRecord::Base
                        :order => "(minutes * 60) + seconds / distance")
   end
 
-  def self.minutes_per_km(conditions = {})
-    Swim.measured.all(:conditions => conditions).map do |s|
+  def self.minutes_per_km
+    measured.all.map do |s|
       [ s.date.to_time.to_i * 1000, s.minutes_per_km ]
     end
   end
 
-  def self.distances(conditions = {})
-    Swim.all(:conditions => conditions).map do |s|
+  def minutes_per_km
+    measured.all.map do |s|
+      [ s.date.to_time.to_i * 1000, s.minutes_per_km ]
+    end
+  end
+
+  def self.distances
+    all.map do |s|
       [ s.date.to_time.to_i * 1000, s.distance / 1000.0 ]
     end
   end
 
   def self.notes
     res = {}
-    Swim.all.each do |s|
+    all.each do |s|
       res[s.date.to_time.to_i * 1000] = {
         :date => s.date.strftime("%d/%m/%y"),
         :distance => (s.distance / 1000.0).round(2),

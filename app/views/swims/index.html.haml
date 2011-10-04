@@ -65,4 +65,8 @@
             = (distance[1] / 1000.0).round(2) if distance
         -  month = month - 1.month
 
-= javascript_tag("initGraph(#{Swim.notes.to_json}, #{Swim.minutes_per_km(:race => nil).to_json}, #{Swim.distances(:race => nil).to_json},#{Swim.minutes_per_km(:race => true).to_json},#{Swim.distances(:race => true).to_json})")
+= javascript_tag("initGraph(#{Swim.notes.to_json},
+                            #{Swim.training.minutes_per_km.to_json},
+                            #{Swim.training.distances.to_json},
+                            #{Swim.races.minutes_per_km.to_json},
+                            #{Swim.races.distances.to_json})")
