@@ -13,7 +13,7 @@ end
 
 Trollop::die :distance, "must exists" if opts[:distance].blank?
 
-notes = opts[:notes].gsub("(", "[").gsub(")", "]")
+notes = opts[:notes].gsub("(", "[").gsub(")", "]") if opts[:notes]
 
 params = {
   distance: opts[:distance],
