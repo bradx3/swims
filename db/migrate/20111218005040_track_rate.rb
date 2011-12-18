@@ -1,6 +1,6 @@
 class TrackRate < ActiveRecord::Migration
   def up
-    add_column :swims, :rate, :double
+    add_column :swims, :rate, :float
 
     Swim.measured.each do |s|
       s.calculate_rate
