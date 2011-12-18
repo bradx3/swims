@@ -3,6 +3,5 @@ task :add_swim => :environment do
                notes: ENV["notes"].gsub("[", "(").gsub("]", ")"),
                race: ENV["race"],
                distance: ENV["distance"],
-               minutes: ENV["minutes"],
                seconds: ENV["seconds"])
 end

@@ -14,7 +14,7 @@
     - [1, 2, 3].each do |distance|
       %tr
         %th Best #{distance}km Training Time
-        %td= Swim.training.measured.distance(distance * 1000).ordered_by_time.first.total_seconds.to_time
+        %td= Swim.training.measured.distance(distance * 1000).ordered_by_time.first.seconds.to_time
 
     %tr
       %th Average Race Time / km

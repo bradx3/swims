@@ -21,8 +21,10 @@ params = {
   date: opts[:date],
   race: opts[:race],
 }
-params[:minutes] = opts[:time].split(".").first if opts[:time]
-params[:seconds] = opts[:time].split(".").last if opts[:time]
+if opts[:time]
+  minutes, seconds = opts[:time].split(".")
+  params[:seconds] = (minutes.to_i * 60) + seconds.to_i
+end
 
 params = params.map { |k, v| "#{k}=#{v}" }
 cmd = "heroku run rake add_swim #{params.join(" ")}"

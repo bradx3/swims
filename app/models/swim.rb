@@ -1,10 +1,10 @@
 class Swim < ActiveRecord::Base
-  scope :measured, where("minutes > 0 and seconds  > 0 and distance > 0")
+  scope :measured, where("seconds  > 0 and distance > 0")
   scope :training, where(:race => [nil, false])
   scope :races, where(:race => true)
   scope :distance, lambda { |distance| where(:distance => distance) }
-  scope :ordered_by_time, order("(minutes * 60) + seconds")
-  scope :ordered_by_rate, order("((minutes * 60) + seconds) / distance")
+  scope :ordered_by_time, order("seconds")
+  scope :ordered_by_rate, order("seconds / distance")
 
   def self.average_time(swims)
     distance = 0.0
@@ -12,7 +12,7 @@ class Swim < ActiveRecord::Base
 
     swims.each do |s|
       distance += s.distance
-      seconds += (s.minutes * 60.0) + s.seconds
+      seconds += s.seconds
     end
 
     res = seconds.to_f / distance.to_f
@@ -63,13 +63,13 @@ class Swim < ActiveRecord::Base
   end
   
   def self.best_training_swim(distance = nil)
-    conds = "race is null and minutes > 0" 
+    conds = "race is null and seconds > 0"
     if distance
       conds += " and distance = #{ distance }"
     end
 
     return  Swim.first(:conditions => [ conds ],
-                       :order => "(minutes * 60) + seconds / distance")
+                       :order => "seconds / distance")
   end
 
   def self.minutes_per_km
@@ -96,19 +96,15 @@ class Swim < ActiveRecord::Base
       res[s.date.to_time.to_i * 1000] = {
         :date => s.date.strftime("%d/%m/%y"),
         :distance => (s.distance / 1000.0).round(2),
-        :time => "#{ s.minutes }:#{ s.seconds }",
+        :time => (s.seconds.to_i > 0 ? s.seconds.to_time : ""),
         :notes => s.notes || ""
       }
     end
     return res
   end
 
-  def total_seconds
-    (minutes * 60) + seconds if minutes and seconds
-  end
-
   def seconds_per_m
-    total_seconds.to_f / distance.to_f
+    seconds.to_f / distance.to_f
   end
 
   def minutes_per_km

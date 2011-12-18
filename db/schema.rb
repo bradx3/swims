@@ -11,12 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110908073743) do
+ActiveRecord::Schema.define(:version => 20111218004040) do
 
   create_table "swims", :force => true do |t|
     t.date    "date"
     t.integer "distance"
-    t.integer "minutes"
     t.integer "seconds"
     t.boolean "race"
     t.text    "notes"
