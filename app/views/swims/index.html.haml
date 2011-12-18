@@ -65,7 +65,7 @@
         -  month = month - 1.month
 
 = javascript_tag("initGraph(#{Swim.notes.to_json},
-                            #{Swim.training.minutes_per_km.to_json},
-                            #{Swim.training.distances.to_json},
-                            #{Swim.races.minutes_per_km.to_json},
-                            #{Swim.races.distances.to_json})")
+                            #{Swim.order("date").training.minutes_per_km.to_json},
+                            #{Swim.order("date").training.distances.to_json},
+                            #{Swim.order("date").races.minutes_per_km.to_json},
+                            #{Swim.order("date").races.distances.to_json})")
