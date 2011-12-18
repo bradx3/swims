@@ -10,3 +10,11 @@ class Float
     return "#{ minutes }:#{ seconds }"
   end
 end
+
+class Fixnum
+  def to_time
+    minutes = self / 60
+    seconds = self % 60
+    "#{minutes}:#{seconds.to_s.rjust(2, "0")}"
+  end
+end

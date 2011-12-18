@@ -1,9 +1,10 @@
 class Swim < ActiveRecord::Base
-  default_scope order(:date)
-
-  scope :measured, conditions: [ "minutes > 0 and seconds  > 0 and distance > 0" ]
-  scope :training, :conditions => { :race => [nil, false] }
-  scope :races, :conditions => { :race => true }
+  scope :measured, where("minutes > 0 and seconds  > 0 and distance > 0")
+  scope :training, where(:race => [nil, false])
+  scope :races, where(:race => true)
+  scope :distance, lambda { |distance| where(:distance => distance) }
+  scope :ordered_by_time, order("(minutes * 60) + seconds")
+  scope :ordered_by_rate, order("((minutes * 60) + seconds) / distance")
 
   def self.average_time(swims)
     distance = 0.0
