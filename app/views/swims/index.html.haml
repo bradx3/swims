@@ -5,20 +5,21 @@
   %table.stats
     %tr
       %th Average Training Time / km
-      %td= Swim.average_time(Swim.measured.training).to_time
+      %td= Swim.measured.training.average_time.to_time
 
     %tr
       %th Best Training Time / km
-      %td TOFIX
+      - swim = Swim.measured.training.order(:rate).first
+      %td= "#{swim.to_time} (#{swim.minutes_per_km.to_time})"
 
     - [1, 2, 3].each do |distance|
       %tr
         %th Best #{distance}km Training Time
-        %td= Swim.training.measured.distance(distance * 1000).ordered_by_time.first.seconds.to_time
+        %td= Swim.training.measured.distance(distance * 1000).order(:seconds).first.to_time
 
     %tr
       %th Average Race Time / km
-      %td= Swim.average_time(Swim.races).to_time
+      %td= Swim.races.average_time.to_time
 
 #distances
   %h2 Distances

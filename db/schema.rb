@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111218004040) do
+ActiveRecord::Schema.define(:version => 20111218005040) do
 
   create_table "swims", :force => true do |t|
     t.date    "date"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(:version => 20111218004040) do
     t.integer "seconds"
     t.boolean "race"
     t.text    "notes"
+    t.float   "rate"
   end
 
 end

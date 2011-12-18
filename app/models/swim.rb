@@ -1,26 +1,17 @@
 class Swim < ActiveRecord::Base
-  scope :measured, where("seconds  > 0 and distance > 0")
+  scope :measured, where("seconds > 0 and distance > 0")
   scope :training, where(:race => [nil, false])
   scope :races, where(:race => true)
   scope :distance, lambda { |distance| where(:distance => distance) }
-  scope :ordered_by_time, order("seconds")
-  scope :ordered_by_rate, order("seconds / distance")
 
-  def self.average_time(swims)
-    distance = 0.0
-    seconds = 0.0
+  before_create :calculate_rate
 
-    swims.each do |s|
-      distance += s.distance
-      seconds += s.seconds
-    end
-
-    res = seconds.to_f / distance.to_f
-    return res * 1000.0 / 60.0
+  def self.average_time
+    (average("rate").to_f * 1000).to_i
   end
 
   def self.average_distance_per_month
-    months = swims_grouped_by_month
+    months = grouped_by_month
     total = 0.0
 
     months.each do |month, swims|
@@ -31,7 +22,7 @@ class Swim < ActiveRecord::Base
   end
 
   def self.total_distance_per_month
-    months = swims_grouped_by_month
+    months = grouped_by_month
     months = months.map do |month, swims|
       total = swims.inject(0) { |sum, s| sum += s.distance }
       [ month, total ]
@@ -46,22 +37,17 @@ class Swim < ActiveRecord::Base
   end
 
   def self.average_times_by_month
-    counted_swims = Swim.measured.training.all
-    months = swims_grouped_by_month
-
-    months = months.map do |month, swims|
-      to_count = swims.select { |s| counted_swims.include?(s) }
-      [ month, average_time(to_count) ]
+    months = Swim.measured.training.grouped_by_month
+    months.map do |month, swims|
+      [ month, Swim.where(id: swims).average_time ]
     end
-    return months
   end
 
-  def self.swims_grouped_by_month
-    months = Swim.all.group_by { |s| s.date.strftime("%B %Y") }
-    months = months.sort_by { |month, swims| Date.strptime(month, "%B %Y") }
-    return months
+  def self.grouped_by_month
+    months = all.group_by { |s| s.date.strftime("%B %Y") }
+    months.sort_by { |month, swims| Date.strptime(month, "%B %Y") }
   end
-  
+
   def self.best_training_swim(distance = nil)
     conds = "race is null and seconds > 0"
     if distance
@@ -110,6 +96,18 @@ class Swim < ActiveRecord::Base
   def minutes_per_km
     res = seconds_per_m * 1000.0 / 60.0
     return res if res.to_i != 0
+  end
+
+  def measured?
+    Swim.measured.exists?(id: id)
+  end
+
+  def calculate_rate
+    self.rate = (seconds.to_f / distance.to_f) if measured?
+  end
+
+  def to_time
+    (seconds ? seconds.to_time : "")
   end
 
 end
